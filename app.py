@@ -6,7 +6,7 @@ from ultralytics import YOLO
 app = FastAPI()
 
 # Load the saved model
-model = YOLO(r"C:\Users\shiva\Downloads\best.onnx")  # Replace with the path to your saved model
+model = YOLO(r"best.onnx")  # Replace with the path to your saved model
 
 @app.post("/detect", response_class=Response)
 async def detect(file: UploadFile = File(...)):
