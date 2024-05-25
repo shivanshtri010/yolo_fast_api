@@ -1,25 +1,31 @@
-FROM python:3-alpine AS builder
- 
+# Stage 1: Build
+FROM python:3.10-alpine as builder
+
 WORKDIR /app
- 
-RUN python3 -m venv venv
+
+# Install build dependencies
+RUN apk add --no-cache gcc musl-dev libffi-dev
+
+# Create a virtual environment and install dependencies
+RUN python -m venv venv
 ENV VIRTUAL_ENV=/app/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
- 
+
 COPY requirements.txt .
-RUN pip install -r requirements.txt
- 
-# Stage 2
-FROM python:3-alpine AS runner
- 
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Stage 2: Final
+FROM python:3.10-alpine
+
 WORKDIR /app
- 
-COPY --from=builder /app/venv venv
-COPY main.py main.py
- 
+
+# Copy only the necessary files from the builder stage
+COPY --from=builder /app/venv /app/venv
+COPY app.py /app/app.py
+
 ENV VIRTUAL_ENV=/app/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
- 
+
 EXPOSE 8000
- 
-CMD [ "uvicorn", "--host", "0.0.0.0", "main:app" ]
+
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "app:app"]
