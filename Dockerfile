@@ -5,6 +5,10 @@ WORKDIR /app
 
 # Install build dependencies
 RUN apk add --no-cache gcc musl-dev libffi-dev
+RUN apk add --no-cache --virtual .build-deps \
+    g++ \
+    musl-dev \
+    linux-headers
 
 # Create a virtual environment and install dependencies
 RUN python -m venv /app/venv
