@@ -1,5 +1,5 @@
+pip==latest
 setuptools
-pip
 wheel
 fastapi
 uvicorn
